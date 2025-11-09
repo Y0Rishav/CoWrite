@@ -65,18 +65,20 @@ export default function VersionHistory({ docId, docTitle, isOpen, onClose, onRes
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-dark-800 rounded-lg max-w-4xl w-full max-h-screen overflow-auto border border-dark-700">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+      <div className="sketchy-card shadow-sketchy-lg max-w-4xl w-full max-h-screen overflow-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-dark-800 border-b border-dark-700 px-6 py-4 flex justify-between items-center">
+        <div className="sticky top-0 sketchy-container border-b-2 border-dashed border-orange-300 px-6 py-4 flex justify-between items-center shadow-sketchy">
           <div className="flex items-center gap-2">
-            <FiGitBranch size={20} className="text-blue-400" />
-            <h2 className="text-xl font-bold text-white">Version History</h2>
-            <span className="text-sm text-gray-400">({versions.length} versions)</span>
+            <FiGitBranch size={20} className="text-purple-600" />
+            <h2 className="font-sketch font-bold text-2xl text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+              📜 Version History
+            </h2>
+            <span className="font-handlee text-gray-700">({versions.length} versions)</span>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors"
+            className="text-gray-700 hover:text-orange-600 transition-colors p-1"
           >
             <FiX size={24} />
           </button>
@@ -85,42 +87,42 @@ export default function VersionHistory({ docId, docTitle, isOpen, onClose, onRes
         {/* Content */}
         <div className="flex h-full">
           {/* Versions List */}
-          <div className="w-full md:w-1/3 border-r border-dark-700 overflow-y-auto">
+          <div className="w-full md:w-1/3 border-r-2 border-dashed border-orange-300 overflow-y-auto">
             {loading ? (
               <div className="p-6 text-center">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
-                <p className="text-gray-400">Loading versions...</p>
+                <div className="animate-spin rounded-full h-8 w-8 border-4 border-orange-200 border-t-orange-600 mx-auto mb-2"></div>
+                <p className="font-handlee text-gray-700">Loading versions...</p>
               </div>
             ) : versions.length === 0 ? (
-              <div className="p-6 text-center text-gray-400">
+              <div className="p-6 text-center font-handlee text-gray-700">
                 <FiClock size={32} className="mx-auto mb-2 opacity-50" />
                 <p>No versions yet</p>
               </div>
             ) : (
-              <div className="divide-y divide-dark-700">
+              <div className="divide-y divide-dashed divide-orange-300">
                 {versions.map((version, index) => (
                   <button
                     key={version.id}
                     onClick={() => setSelectedVersion(version)}
                     className={`w-full text-left p-4 transition-colors border-l-4 ${
                       selectedVersion?.id === version.id
-                        ? 'bg-dark-700 border-l-blue-500'
-                        : 'hover:bg-dark-700 border-l-dark-600'
+                        ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-l-orange-500 shadow-sketchy'
+                        : 'hover:bg-yellow-50 border-l-orange-200'
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-white truncate">
+                        <p className="font-sketch font-bold text-gray-800 truncate text-lg">
                           {version.reason || 'Version'}
                         </p>
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="font-handlee text-sm text-gray-700 mt-1">
                           {version.createdAt.toLocaleString()}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="font-handlee text-xs text-gray-600 mt-1">
                           by {version.createdByName || 'Unknown'}
                         </p>
                       </div>
-                      <div className="text-right text-xs text-gray-500">
+                      <div className="text-right font-handlee text-xs text-gray-700">
                         <div>{version.wordCount} words</div>
                         <div>{version.characterCount} chars</div>
                       </div>
@@ -135,27 +137,27 @@ export default function VersionHistory({ docId, docTitle, isOpen, onClose, onRes
           {selectedVersion && (
             <div className="hidden md:flex flex-1 flex-col">
               {/* Version Info */}
-              <div className="border-b border-dark-700 px-6 py-4 bg-dark-700">
+              <div className="border-b-2 border-dashed border-orange-300 px-6 py-4 bg-gradient-to-r from-yellow-100 to-orange-100">
                 <div className="space-y-2">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-semibold text-white">{selectedVersion.reason}</h3>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <h3 className="font-sketch font-bold text-gray-800 text-lg">{selectedVersion.reason}</h3>
+                      <p className="font-handlee text-gray-700 mt-1">
                         {selectedVersion.createdAt.toLocaleString()}
                       </p>
                     </div>
-                    <span className="text-xs px-2 py-1 bg-blue-900 text-blue-200 rounded">
+                    <span className="sketchy-badge text-xs">
                       {selectedVersion.isRestore ? 'Restore' : selectedVersion.isBackup ? 'Backup' : 'Manual'}
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="grid grid-cols-2 gap-2 font-handlee">
                     <div>
-                      <p className="text-gray-500">Words</p>
-                      <p className="text-white font-semibold">{selectedVersion.wordCount}</p>
+                      <p className="text-gray-700">Words</p>
+                      <p className="text-gray-800 font-bold">{selectedVersion.wordCount}</p>
                     </div>
                     <div>
-                      <p className="text-gray-500">Characters</p>
-                      <p className="text-white font-semibold">{selectedVersion.characterCount}</p>
+                      <p className="text-gray-700">Characters</p>
+                      <p className="text-gray-800 font-bold">{selectedVersion.characterCount}</p>
                     </div>
                   </div>
                 </div>
@@ -163,47 +165,47 @@ export default function VersionHistory({ docId, docTitle, isOpen, onClose, onRes
 
               {/* Preview */}
               <div className="flex-1 overflow-auto p-6">
-                <div className="bg-dark-900 rounded p-4 font-mono text-sm text-gray-300 whitespace-pre-wrap break-words max-h-64 overflow-auto">
+                <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-4 font-handlee text-sm text-gray-800 whitespace-pre-wrap break-words max-h-64 overflow-auto border-2 border-dashed border-orange-300">
                   {selectedVersion.content.substring(0, 500)}
                   {selectedVersion.content.length > 500 && (
-                    <p className="text-gray-500 mt-2">... (content truncated)</p>
+                    <p className="text-gray-600 mt-2 italic">... (content truncated)</p>
                   )}
                 </div>
               </div>
 
               {/* Actions */}
-              <div className="border-t border-dark-700 p-4 flex gap-2 flex-wrap">
+              <div className="border-t-2 border-dashed border-orange-300 p-4 flex gap-2 flex-wrap">
                 <button
                   onClick={() => handleRestore(selectedVersion)}
                   disabled={restoring}
-                  className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded transition-colors disabled:opacity-50"
+                  className="sketchy-button flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-400 to-emerald-500 border-emerald-700 disabled:opacity-50 hover:shadow-sketchy-hover"
                 >
                   <FiRotateCcw size={16} />
                   Restore
                 </button>
-                <div className="flex gap-1 border-l border-dark-600 pl-2 ml-2">
+                <div className="flex gap-1 border-l-2 border-dashed border-orange-300 pl-2 ml-2">
                   <button
                     onClick={() => handleExport(selectedVersion, 'md')}
-                    className="flex items-center gap-1 px-3 py-2 bg-dark-700 hover:bg-dark-600 text-gray-300 rounded transition-colors text-sm"
+                    className="sketchy-badge px-3 py-2 text-xs font-bold hover:shadow-sketchy"
                     title="Export as Markdown"
                   >
-                    <FiDownload size={14} />
+                    <FiDownload size={14} className="inline mr-1" />
                     MD
                   </button>
                   <button
                     onClick={() => handleExport(selectedVersion, 'txt')}
-                    className="flex items-center gap-1 px-3 py-2 bg-dark-700 hover:bg-dark-600 text-gray-300 rounded transition-colors text-sm"
+                    className="sketchy-badge px-3 py-2 text-xs font-bold hover:shadow-sketchy"
                     title="Export as Text"
                   >
-                    <FiDownload size={14} />
+                    <FiDownload size={14} className="inline mr-1" />
                     TXT
                   </button>
                   <button
                     onClick={() => handleExport(selectedVersion, 'html')}
-                    className="flex items-center gap-1 px-3 py-2 bg-dark-700 hover:bg-dark-600 text-gray-300 rounded transition-colors text-sm"
+                    className="sketchy-badge px-3 py-2 text-xs font-bold hover:shadow-sketchy"
                     title="Export as HTML"
                   >
-                    <FiDownload size={14} />
+                    <FiDownload size={14} className="inline mr-1" />
                     HTML
                   </button>
                 </div>
