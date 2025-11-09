@@ -3,11 +3,12 @@ import { useAuthStore } from '../utils/authStore'
 import { db } from '../utils/firebase'
 import { doc, updateDoc, onSnapshot } from 'firebase/firestore'
 import Toast from 'react-hot-toast'
-import { FiEdit, FiEye, FiBold, FiItalic, FiCode, FiList, FiLink2, FiType, FiType2, FiGitBranch, FiSave, FiFlag } from 'react-icons/fi'
+import { FiEdit, FiEye, FiBold, FiItalic, FiCode, FiList, FiLink2, FiType, FiType2, FiGitBranch, FiSave, FiFlag, FiZap } from 'react-icons/fi'
 import ParticipantPresence from './ParticipantPresence'
 import MarkdownPreview from './MarkdownPreview'
 import VersionHistory from './VersionHistory'
 import CheckpointModal from './CheckpointModal'
+import AIEditingModal from './AIEditingModal'
 import { updateUserPresence, removeUserPresence, keepPresenceAlive } from '../utils/presenceService'
 import { createVersionSnapshot } from '../utils/versionService'
 
@@ -21,6 +22,9 @@ export default function CollaborativeEditor({ docId, docTitle }) {
   const [showVersionHistory, setShowVersionHistory] = useState(false)
   const [showCheckpointModal, setShowCheckpointModal] = useState(false)
   const [isSavingCheckpoint, setIsSavingCheckpoint] = useState(false)
+  const [showAIModal, setShowAIModal] = useState(false)
+  const [selectedText, setSelectedText] = useState('')
+  const [selectionStart, setSelectionStart] = useState(0)
   const [docData, setDocData] = useState({ title: docTitle })
   const syncTimeoutRef = useRef(null)
   const versionTimeoutRef = useRef(null)
@@ -160,6 +164,34 @@ export default function CollaborativeEditor({ docId, docTitle }) {
   const handleCodeBlock = () => insertMarkdown('```\n', '\n```')
   const handleQuote = () => insertMarkdown('> ')
 
+  // Handle text selection for AI editing
+  const handleTextSelection = () => {
+    if (!textareaRef.current) return
+    const textarea = textareaRef.current
+    const selected = content.substring(textarea.selectionStart, textarea.selectionEnd)
+    
+    if (selected.length > 0) {
+      setSelectedText(selected)
+      setSelectionStart(textarea.selectionStart)
+      setShowAIModal(true)
+    } else {
+      Toast.error('Please select some text first')
+    }
+  }
+
+  // Apply AI-edited text to the document
+  const handleApplyAIEdit = (editedText) => {
+    if (!textareaRef.current) return
+    const textarea = textareaRef.current
+    const newContent = 
+      content.substring(0, selectionStart) +
+      editedText +
+      content.substring(selectionStart + selectedText.length)
+    
+    setContent(newContent)
+    Toast.success('Text updated!')
+  }
+
   // Handle checkpoint/commit save
   const handleCheckpointSave = async (message) => {
     if (!user || !docId) return
@@ -222,173 +254,184 @@ export default function CollaborativeEditor({ docId, docTitle }) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center h-full bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading editor...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-200 border-t-orange-600 mx-auto mb-6"></div>
+          <p className="font-handlee text-gray-700 text-xl">Loading editor...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="h-full flex flex-col bg-dark-900">
+    <div className="h-full flex flex-col bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
       {/* Main Toolbar */}
-      <div className="bg-dark-800 border-b border-dark-700 px-4 py-3 flex justify-between items-center flex-wrap gap-3">
+      <div className="sketchy-container border-b border-orange-300 px-4 py-3 flex justify-between items-center flex-wrap gap-3 shadow-sketchy">
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          <h2 className="text-lg font-semibold text-white truncate">{docTitle}</h2>
+          <h2 className="font-sketch text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 truncate">
+            {docTitle}
+          </h2>
           {isSaving && (
             <div className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse-save"></div>
-              <span className="text-xs text-blue-400 animate-pulse-save">Saving...</span>
+              <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse-save"></div>
+              <span className="font-handlee text-xs text-orange-600 animate-pulse-save">Saving...</span>
             </div>
           )}
           {!isSaving && lastSavedRef.current && (
-            <span className="text-xs text-gray-500">✓ Saved</span>
+            <span className="font-handlee text-xs text-green-600">✓ Saved</span>
           )}
         </div>
-        <div className="flex gap-3 items-center flex-wrap">
+        <div className="flex gap-2 items-center flex-wrap">
           <ParticipantPresence docId={docId} />
           <button
             onClick={() => setShowCheckpointModal(true)}
-            className="flex items-center gap-2 px-3 py-1 rounded transition-all duration-200 transform hover:scale-105 active:scale-95 bg-green-600 hover:bg-green-700 text-white"
+            className="sketchy-button px-3 py-2 flex items-center gap-2 text-sm hover:shadow-sketchy-hover bg-gradient-to-r from-green-400 to-emerald-500 border-emerald-700"
             title="Save checkpoint with message"
           >
             <FiFlag size={16} />
-            <span className="hidden sm:inline text-sm">Checkpoint</span>
+            <span className="hidden sm:inline">Checkpoint</span>
           </button>
           <button
             onClick={() => setShowVersionHistory(true)}
-            className="flex items-center gap-2 px-3 py-1 rounded transition-all duration-200 transform hover:scale-105 active:scale-95 bg-purple-600 hover:bg-purple-700 text-white"
+            className="sketchy-button px-3 py-2 flex items-center gap-2 text-sm hover:shadow-sketchy-hover bg-gradient-to-r from-purple-400 to-pink-400 border-purple-700"
             title="View version history"
           >
             <FiGitBranch size={16} />
-            <span className="hidden sm:inline text-sm">History</span>
+            <span className="hidden sm:inline">History</span>
           </button>
-          <div className="flex gap-2">
+          <div className="flex gap-1 bg-gradient-to-r from-amber-100 to-yellow-100 p-1 rounded-lg border border-orange-300">
             <button
               onClick={() => setViewMode('edit')}
-              className={`flex items-center gap-2 px-3 py-1 rounded transition-all duration-200 transform hover:scale-105 active:scale-95 ${
+              className={`px-3 py-1 rounded font-sketch font-bold transition-all ${
                 viewMode === 'edit'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-dark-700 text-gray-400 hover:bg-dark-600'
+                  ? 'bg-white text-orange-600 shadow-sketchy'
+                  : 'text-gray-700 hover:bg-white hover:bg-opacity-50'
               }`}
             >
-              <FiEdit size={16} />
-              <span className="hidden sm:inline text-sm">Edit</span>
+              <FiEdit size={16} className="inline mr-1" />
+              Edit
             </button>
             <button
               onClick={() => setViewMode('split')}
-              className={`flex items-center gap-2 px-3 py-1 rounded transition-all duration-200 transform hover:scale-105 active:scale-95 ${
+              className={`px-3 py-1 rounded font-sketch font-bold transition-all ${
                 viewMode === 'split'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-dark-700 text-gray-400 hover:bg-dark-600'
+                  ? 'bg-white text-orange-600 shadow-sketchy'
+                  : 'text-gray-700 hover:bg-white hover:bg-opacity-50'
               }`}
             >
-              <FiEye size={16} />
-              <span className="hidden sm:inline text-sm">Preview</span>
+              <FiEye size={16} className="inline mr-1" />
+              Preview
             </button>
           </div>
         </div>
       </div>
 
       {/* Formatting Toolbar */}
-      <div className="bg-dark-800 border-b border-dark-700 px-4 py-2 flex gap-1 flex-wrap items-center overflow-x-auto">
-        <div className="flex gap-1 border-r border-dark-700 pr-2">
+      <div className="sketchy-container border-b border-orange-300 px-4 py-2 flex gap-2 flex-wrap items-center overflow-x-auto bg-gradient-to-r from-amber-50 to-yellow-50 shadow-sm">
+        {/* AI Editing Button */}
+        <button
+          onClick={handleTextSelection}
+          className="p-2 text-gray-700 hover:text-orange-600 bg-gradient-to-r from-purple-300 to-pink-300 hover:from-purple-400 hover:to-pink-400 rounded-lg transition-all transform hover:scale-110 active:scale-95 border border-purple-400 font-sketch font-bold"
+          title="Select text and use AI editing tools"
+        >
+          <FiZap size={16} />
+        </button>
+
+        <div className="flex gap-1 border-r border-orange-300 pr-2">
           <button
             onClick={handleBold}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item"
+            className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-100 rounded-lg transition-all transform hover:scale-110 active:scale-95"
             title="Bold (Ctrl+B)"
           >
             <FiBold size={16} />
           </button>
           <button
             onClick={handleItalic}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item"
+            className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-100 rounded-lg transition-all transform hover:scale-110 active:scale-95"
             title="Italic (Ctrl+I)"
           >
             <FiItalic size={16} />
           </button>
           <button
             onClick={handleCode}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item"
+            className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-100 rounded-lg transition-all transform hover:scale-110 active:scale-95"
             title="Inline Code (Ctrl+E)"
           >
             <FiCode size={16} />
           </button>
         </div>
 
-        <div className="flex gap-1 border-r border-dark-700 pr-2">
+        <div className="flex gap-1 border-r border-orange-300 pr-2">
           <button
             onClick={() => handleHeading(1)}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item text-sm font-bold"
+            className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-100 rounded-lg transition-all transform hover:scale-110 active:scale-95 text-sm font-bold"
             title="Heading 1"
           >
             H1
           </button>
           <button
             onClick={() => handleHeading(2)}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item text-sm font-bold"
+            className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-100 rounded-lg transition-all transform hover:scale-110 active:scale-95 text-sm font-bold"
             title="Heading 2"
           >
             H2
           </button>
           <button
             onClick={() => handleHeading(3)}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item text-sm font-bold"
+            className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-100 rounded-lg transition-all transform hover:scale-110 active:scale-95 text-sm font-bold"
             title="Heading 3"
           >
             H3
           </button>
         </div>
 
-        <div className="flex gap-1 border-r border-dark-700 pr-2">
+        <div className="flex gap-1 border-r border-orange-300 pr-2">
           <button
             onClick={handleLink}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item"
+            className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-100 rounded-lg transition-all transform hover:scale-110 active:scale-95"
             title="Link (Ctrl+K)"
           >
             <FiLink2 size={16} />
           </button>
           <button
             onClick={handleBulletList}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item"
+            className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-100 rounded-lg transition-all transform hover:scale-110 active:scale-95"
             title="Bullet List"
           >
             <FiList size={16} />
           </button>
           <button
             onClick={handleNumberedList}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item text-sm font-bold"
+            className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-100 rounded-lg transition-all transform hover:scale-110 active:scale-95 text-sm font-bold"
             title="Numbered List"
           >
             1.
           </button>
         </div>
 
-        <div className="flex gap-1 border-r border-dark-700 pr-2">
+        <div className="flex gap-1 border-r border-orange-300 pr-2">
           <button
             onClick={handleCodeBlock}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item text-xs font-mono"
+            className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-100 rounded-lg transition-all transform hover:scale-110 active:scale-95 text-xs font-mono"
             title="Code Block"
           >
             &lt;/&gt;
           </button>
           <button
             onClick={handleQuote}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item font-bold"
+            className="p-2 text-gray-700 hover:text-orange-600 hover:bg-orange-100 rounded-lg transition-all transform hover:scale-110 active:scale-95 font-bold"
             title="Quote"
           >
             "
           </button>
         </div>
 
-        <div className="flex gap-1 items-center">
-          <label className="text-xs text-gray-400 mr-2">Font Size:</label>
+        <div className="flex gap-2 items-center ml-auto">
+          <label className="font-sketch font-bold text-gray-700 text-sm">Font:</label>
           <select
             value={fontSize}
             onChange={(e) => setFontSize(e.target.value)}
-            className="bg-dark-700 text-gray-300 px-2 py-1 rounded text-sm border border-dark-600 focus:outline-none transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 hover:bg-dark-600"
+            className="sketchy-input px-2 py-1 text-sm"
           >
             <option value="xs">XS</option>
             <option value="sm">Small</option>
@@ -408,11 +451,11 @@ export default function CollaborativeEditor({ docId, docTitle }) {
             value={content}
             onChange={handleContentChange}
             onKeyDown={handleKeyDown}
-            placeholder="Start typing... Supports Markdown! Use Ctrl+B for bold, Ctrl+I for italic, Ctrl+K for links, Ctrl+E for code"
-            className={`w-full h-full bg-dark-900 text-white p-4 resize-none focus:outline-none font-mono text-${fontSize} transition-all duration-75 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+            placeholder="✍️ Start typing... Supports Markdown! Use Ctrl+B for bold, Ctrl+I for italic, Ctrl+K for links, Ctrl+E for code"
+            className={`w-full h-full bg-gradient-to-br from-yellow-50 to-orange-50 text-gray-800 p-6 resize-none focus:outline-none font-handlee text-${fontSize} transition-all duration-75 focus:ring-4 focus:ring-orange-400`}
             spellCheck="false"
             style={{
-              lineHeight: '1.6',
+              lineHeight: '1.8',
               scrollBehavior: 'smooth',
               backfaceVisibility: 'hidden',
               WebkitFontSmoothing: 'antialiased',
@@ -422,7 +465,7 @@ export default function CollaborativeEditor({ docId, docTitle }) {
 
         {/* Markdown Preview */}
         {viewMode === 'split' && (
-          <div className="flex-1 border-l border-dark-700 overflow-auto p-4 bg-dark-800">
+          <div className="flex-1 border-l-4 border-dashed border-orange-300 overflow-auto p-6 bg-gradient-to-br from-white to-yellow-50">
             <MarkdownPreview content={content} />
           </div>
         )}
@@ -446,6 +489,14 @@ export default function CollaborativeEditor({ docId, docTitle }) {
         onClose={() => setShowCheckpointModal(false)}
         onSave={handleCheckpointSave}
         isSaving={isSavingCheckpoint}
+      />
+
+      {/* AI Editing Modal */}
+      <AIEditingModal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        selectedText={selectedText}
+        onApply={handleApplyAIEdit}
       />
     </div>
   )
