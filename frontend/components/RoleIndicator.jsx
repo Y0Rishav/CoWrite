@@ -1,6 +1,6 @@
 import { FiCrown, FiUser } from 'react-icons/fi'
 
-export default function RoleIndicator({ role, size = 'md' }) {
+function RoleIndicator({ role, size = 'md' }) {
   if (!role) return null
 
   const isOwner = role === 'owner'
@@ -24,3 +24,5 @@ export default function RoleIndicator({ role, size = 'md' }) {
     </div>
   )
 }
+
+export default RoleIndicator

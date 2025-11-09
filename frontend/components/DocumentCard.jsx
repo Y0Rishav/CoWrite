@@ -5,7 +5,6 @@ import Toast from 'react-hot-toast'
 import { FiCopy, FiExternalLink, FiShare2, FiTrash2, FiCode } from 'react-icons/fi'
 import { formatDate, deleteDocument, getUserRole } from '../utils/documentService'
 import { useAuthStore } from '../utils/authStore'
-import RoleIndicator from './RoleIndicator'
 
 export default function DocumentCard({ doc, docId, onDocumentDeleted }) {
   const router = useRouter()
@@ -105,7 +104,13 @@ export default function DocumentCard({ doc, docId, onDocumentDeleted }) {
           <div className="mb-3 flex flex-wrap gap-1">
             {participants.slice(0, 3).map(([userId, participantData]) => (
               <div key={userId} className="flex items-center gap-1">
-                <RoleIndicator role={participantData.role} size="sm" />
+                <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${
+                  participantData.role === 'owner' 
+                    ? 'bg-yellow-900 text-yellow-200' 
+                    : 'bg-blue-900 text-blue-200'
+                }`}>
+                  {participantData.role === 'owner' ? '👑' : '👤'}
+                </span>
                 <span className="text-xs text-gray-400 truncate max-w-xs" title={participantData.displayName}>
                   {participantData.displayName}
                 </span>

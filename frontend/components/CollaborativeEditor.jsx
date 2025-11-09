@@ -5,6 +5,7 @@ import { doc, updateDoc, onSnapshot } from 'firebase/firestore'
 import Toast from 'react-hot-toast'
 import { FiEdit, FiEye } from 'react-icons/fi'
 import ParticipantPresence from './ParticipantPresence'
+import MarkdownPreview from './MarkdownPreview'
 import { updateUserPresence, removeUserPresence, keepPresenceAlive } from '../utils/presenceService'
 
 export default function CollaborativeEditor({ docId, docTitle }) {

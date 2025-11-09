@@ -43,17 +43,14 @@ export const createNewDocument = async (userId, userEmail, displayName) => {
 // Fetch user's documents from Firestore
 export const fetchUserDocuments = async (userId) => {
   try {
-    const q = query(
-      collection(db, 'docs'),
-      where('participants', 'array-contains', userId)
-    )
+    const q = query(collection(db, 'docs'))
     
     const snapshot = await getDocs(q)
     const documents = []
 
     snapshot.forEach((doc) => {
-      // Check if user is actually in participants (since array-contains can be fuzzy)
-      if (doc.data().participants[userId]) {
+      // Check if user is in participants (participants is an object with userId as key)
+      if (doc.data().participants && doc.data().participants[userId]) {
         documents.push({
           id: doc.id,
           ...doc.data(),
