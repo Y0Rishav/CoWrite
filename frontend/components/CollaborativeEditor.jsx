@@ -3,11 +3,12 @@ import { useAuthStore } from '../utils/authStore'
 import { db } from '../utils/firebase'
 import { doc, updateDoc, onSnapshot } from 'firebase/firestore'
 import Toast from 'react-hot-toast'
-import { FiEdit, FiEye, FiBold, FiItalic, FiCode, FiList, FiLink2, FiType, FiType2, FiGitBranch, FiSave, FiFlag } from 'react-icons/fi'
+import { FiEdit, FiEye, FiBold, FiItalic, FiCode, FiList, FiLink2, FiType, FiType2, FiGitBranch, FiSave, FiFlag, FiZap } from 'react-icons/fi'
 import ParticipantPresence from './ParticipantPresence'
 import MarkdownPreview from './MarkdownPreview'
 import VersionHistory from './VersionHistory'
 import CheckpointModal from './CheckpointModal'
+import AIEditingModal from './AIEditingModal'
 import { updateUserPresence, removeUserPresence, keepPresenceAlive } from '../utils/presenceService'
 import { createVersionSnapshot } from '../utils/versionService'
 
@@ -21,6 +22,9 @@ export default function CollaborativeEditor({ docId, docTitle }) {
   const [showVersionHistory, setShowVersionHistory] = useState(false)
   const [showCheckpointModal, setShowCheckpointModal] = useState(false)
   const [isSavingCheckpoint, setIsSavingCheckpoint] = useState(false)
+  const [showAIModal, setShowAIModal] = useState(false)
+  const [selectedText, setSelectedText] = useState('')
+  const [selectionStart, setSelectionStart] = useState(0)
   const [docData, setDocData] = useState({ title: docTitle })
   const syncTimeoutRef = useRef(null)
   const versionTimeoutRef = useRef(null)
@@ -160,6 +164,34 @@ export default function CollaborativeEditor({ docId, docTitle }) {
   const handleCodeBlock = () => insertMarkdown('```\n', '\n```')
   const handleQuote = () => insertMarkdown('> ')
 
+  // Handle text selection for AI editing
+  const handleTextSelection = () => {
+    if (!textareaRef.current) return
+    const textarea = textareaRef.current
+    const selected = content.substring(textarea.selectionStart, textarea.selectionEnd)
+    
+    if (selected.length > 0) {
+      setSelectedText(selected)
+      setSelectionStart(textarea.selectionStart)
+      setShowAIModal(true)
+    } else {
+      Toast.error('Please select some text first')
+    }
+  }
+
+  // Apply AI-edited text to the document
+  const handleApplyAIEdit = (editedText) => {
+    if (!textareaRef.current) return
+    const textarea = textareaRef.current
+    const newContent = 
+      content.substring(0, selectionStart) +
+      editedText +
+      content.substring(selectionStart + selectedText.length)
+    
+    setContent(newContent)
+    Toast.success('Text updated!')
+  }
+
   // Handle checkpoint/commit save
   const handleCheckpointSave = async (message) => {
     if (!user || !docId) return
@@ -294,6 +326,15 @@ export default function CollaborativeEditor({ docId, docTitle }) {
 
       {/* Formatting Toolbar */}
       <div className="bg-dark-800 border-b border-dark-700 px-4 py-2 flex gap-1 flex-wrap items-center overflow-x-auto">
+        {/* AI Editing Button */}
+        <button
+          onClick={handleTextSelection}
+          className="p-2 text-gray-400 hover:text-white hover:bg-purple-700 bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item border border-purple-600"
+          title="Select text and use AI editing tools"
+        >
+          <FiZap size={16} />
+        </button>
+
         <div className="flex gap-1 border-r border-dark-700 pr-2">
           <button
             onClick={handleBold}
@@ -446,6 +487,14 @@ export default function CollaborativeEditor({ docId, docTitle }) {
         onClose={() => setShowCheckpointModal(false)}
         onSave={handleCheckpointSave}
         isSaving={isSavingCheckpoint}
+      />
+
+      {/* AI Editing Modal */}
+      <AIEditingModal
+        isOpen={showAIModal}
+        onClose={() => setShowAIModal(false)}
+        selectedText={selectedText}
+        onApply={handleApplyAIEdit}
       />
     </div>
   )
