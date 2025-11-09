@@ -3,10 +3,13 @@ import { useAuthStore } from '../utils/authStore'
 import { db } from '../utils/firebase'
 import { doc, updateDoc, onSnapshot } from 'firebase/firestore'
 import Toast from 'react-hot-toast'
-import { FiEdit, FiEye, FiBold, FiItalic, FiCode, FiList, FiLink2, FiType, FiType2 } from 'react-icons/fi'
+import { FiEdit, FiEye, FiBold, FiItalic, FiCode, FiList, FiLink2, FiType, FiType2, FiGitBranch, FiSave, FiFlag } from 'react-icons/fi'
 import ParticipantPresence from './ParticipantPresence'
 import MarkdownPreview from './MarkdownPreview'
+import VersionHistory from './VersionHistory'
+import CheckpointModal from './CheckpointModal'
 import { updateUserPresence, removeUserPresence, keepPresenceAlive } from '../utils/presenceService'
+import { createVersionSnapshot } from '../utils/versionService'
 
 export default function CollaborativeEditor({ docId, docTitle }) {
   const { user } = useAuthStore()
@@ -15,7 +18,12 @@ export default function CollaborativeEditor({ docId, docTitle }) {
   const [viewMode, setViewMode] = useState('edit') // 'edit' or 'split'
   const [isSaving, setIsSaving] = useState(false)
   const [fontSize, setFontSize] = useState('sm')
+  const [showVersionHistory, setShowVersionHistory] = useState(false)
+  const [showCheckpointModal, setShowCheckpointModal] = useState(false)
+  const [isSavingCheckpoint, setIsSavingCheckpoint] = useState(false)
+  const [docData, setDocData] = useState({ title: docTitle })
   const syncTimeoutRef = useRef(null)
+  const versionTimeoutRef = useRef(null)
   const lastSavedRef = useRef('')
   const presenceIntervalRef = useRef(null)
   const textareaRef = useRef(null)
@@ -49,6 +57,12 @@ export default function CollaborativeEditor({ docId, docTitle }) {
           const data = snapshot.data()
           const firestoreContent = data.content || ''
           
+          // Store document data for versioning
+          setDocData({
+            title: data.title || docTitle,
+            content: firestoreContent,
+          })
+          
           // Only update if content differs from what we just saved
           if (firestoreContent !== lastSavedRef.current) {
             setContent(firestoreContent)
@@ -74,8 +88,9 @@ export default function CollaborativeEditor({ docId, docTitle }) {
     const newContent = e.target.value
     setContent(newContent)
 
-    
+    // Debounced save to Firestore with version snapshots
     clearTimeout(syncTimeoutRef.current)
+    clearTimeout(versionTimeoutRef.current)
     setIsSaving(true)
     
     syncTimeoutRef.current = setTimeout(async () => {
@@ -87,12 +102,28 @@ export default function CollaborativeEditor({ docId, docTitle }) {
         })
         lastSavedRef.current = newContent
         setIsSaving(false)
+
+        // Create version snapshot periodically
+        versionTimeoutRef.current = setTimeout(async () => {
+          try {
+            await createVersionSnapshot(
+              docId,
+              user.uid,
+              user.displayName,
+              newContent,
+              docData.title || docTitle,
+              'Auto-save'
+            )
+          } catch (error) {
+            console.error('Error creating version snapshot:', error)
+          }
+        }, 30000)
       } catch (error) {
         console.error('Error saving content:', error)
         Toast.error('Failed to save changes')
         setIsSaving(false)
       }
-    }, 10) 
+    }, 500)
   }
 
   // Text formatting utilities
@@ -128,6 +159,40 @@ export default function CollaborativeEditor({ docId, docTitle }) {
   const handleNumberedList = () => insertMarkdown('1. ')
   const handleCodeBlock = () => insertMarkdown('```\n', '\n```')
   const handleQuote = () => insertMarkdown('> ')
+
+  // Handle checkpoint/commit save
+  const handleCheckpointSave = async (message) => {
+    if (!user || !docId) return
+
+    setIsSavingCheckpoint(true)
+    try {
+      // First, save current content to Firestore
+      const docRef = doc(db, 'docs', docId)
+      await updateDoc(docRef, {
+        content: content,
+        lastEdited: new Date(),
+      })
+      lastSavedRef.current = content
+
+      // Then create a checkpoint version with custom message
+      await createVersionSnapshot(
+        docId,
+        user.uid,
+        user.displayName,
+        content,
+        docData.title || docTitle,
+        `Checkpoint: ${message}`
+      )
+
+      Toast.success('Checkpoint saved successfully! ✓')
+    } catch (error) {
+      console.error('Error saving checkpoint:', error)
+      Toast.error('Failed to save checkpoint')
+      throw error
+    } finally {
+      setIsSavingCheckpoint(false)
+    }
+  }
 
   // Handle keyboard shortcuts
   const handleKeyDown = (e) => {
@@ -184,6 +249,22 @@ export default function CollaborativeEditor({ docId, docTitle }) {
         </div>
         <div className="flex gap-3 items-center flex-wrap">
           <ParticipantPresence docId={docId} />
+          <button
+            onClick={() => setShowCheckpointModal(true)}
+            className="flex items-center gap-2 px-3 py-1 rounded transition-all duration-200 transform hover:scale-105 active:scale-95 bg-green-600 hover:bg-green-700 text-white"
+            title="Save checkpoint with message"
+          >
+            <FiFlag size={16} />
+            <span className="hidden sm:inline text-sm">Checkpoint</span>
+          </button>
+          <button
+            onClick={() => setShowVersionHistory(true)}
+            className="flex items-center gap-2 px-3 py-1 rounded transition-all duration-200 transform hover:scale-105 active:scale-95 bg-purple-600 hover:bg-purple-700 text-white"
+            title="View version history"
+          >
+            <FiGitBranch size={16} />
+            <span className="hidden sm:inline text-sm">History</span>
+          </button>
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('edit')}
@@ -346,6 +427,26 @@ export default function CollaborativeEditor({ docId, docTitle }) {
           </div>
         )}
       </div>
+
+      {/* Version History Modal */}
+      <VersionHistory
+        docId={docId}
+        docTitle={docData.title || docTitle}
+        isOpen={showVersionHistory}
+        onClose={() => setShowVersionHistory(false)}
+        onRestore={() => {
+          setShowVersionHistory(false)
+          Toast.success('Document restored from version history')
+        }}
+      />
+
+      {/* Checkpoint Modal */}
+      <CheckpointModal
+        isOpen={showCheckpointModal}
+        onClose={() => setShowCheckpointModal(false)}
+        onSave={handleCheckpointSave}
+        isSaving={isSavingCheckpoint}
+      />
     </div>
   )
 }
