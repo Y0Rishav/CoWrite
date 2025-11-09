@@ -52,10 +52,15 @@ export default function JoinViLink() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-dark-900">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-        <p className="text-gray-400">Joining document...</p>
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-200 border-t-orange-600 mx-auto mb-6"></div>
+        <p className="font-handlee text-gray-700 text-xl">Joining document...</p>
+        <div className="mt-4 flex gap-1 justify-center">
+          <div className="w-2 h-2 bg-orange-400 rounded-full animate-bounce" style={{animationDelay: '0s'}}></div>
+          <div className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+          <div className="w-2 h-2 bg-red-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+        </div>
       </div>
     </div>
   )

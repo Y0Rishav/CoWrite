@@ -164,22 +164,22 @@ export default function AIEditingModal({ isOpen, onClose, selectedText, onApply 
   const currentText = editHistory[editHistory.length - 1].text
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-dark-800 rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-dark-700">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+      <div className="sketchy-card shadow-sketchy-lg w-full max-w-4xl max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="border-b border-dark-700 px-6 py-4 flex justify-between items-center">
+        <div className="border-b-2 border-dashed border-orange-300 px-6 py-4 flex justify-between items-center">
           <div>
-            <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-              <FiZap size={20} className="text-yellow-400" />
+            <h2 className="font-sketch text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 flex items-center gap-2">
+              <FiZap size={20} className="text-yellow-500" />
               AI-Assisted Editing
             </h2>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="font-handlee text-gray-700 mt-1">
               Selected text: {selectedText.substring(0, 50)}{selectedText.length > 50 ? '...' : ''}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors p-2"
+            className="text-gray-700 hover:text-orange-600 transition-colors p-2"
           >
             <FiX size={24} />
           </button>
@@ -188,10 +188,10 @@ export default function AIEditingModal({ isOpen, onClose, selectedText, onApply 
         {/* Main Content */}
         <div className="flex-1 overflow-hidden flex flex-col md:flex-row gap-4 p-6">
           {/* Left Panel - Options */}
-          <div className="w-full md:w-64 flex flex-col gap-4 overflow-y-auto">
+          <div className="w-full md:w-72 flex flex-col gap-4 overflow-y-auto">
             {/* Tone Selector */}
-            <div className="bg-dark-700 rounded-lg p-4 border border-dark-600">
-              <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+            <div className="sketchy-card p-4">
+              <h3 className="font-sketch font-bold text-gray-800 mb-3 flex items-center gap-2 text-lg">
                 <FiMessageSquare size={16} />
                 Change Tone
               </h3>
@@ -201,11 +201,11 @@ export default function AIEditingModal({ isOpen, onClose, selectedText, onApply 
                     key={tone.value}
                     onClick={() => handleToneChange(tone.value)}
                     disabled={loading && currentEdit?.id === 'tone'}
-                    className={`px-3 py-2 rounded text-sm transition-all duration-200 ${
+                    className={`px-3 py-2 rounded-lg text-sm transition-all font-sketch font-bold ${
                       selectedTone === tone.value
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-dark-600 text-gray-300 hover:bg-dark-500'
-                    } disabled:opacity-50 disabled:cursor-not-allowed`}
+                        ? 'bg-gradient-to-r from-orange-400 to-red-400 text-white shadow-sketchy'
+                        : 'bg-gradient-to-r from-amber-200 to-yellow-200 text-gray-800 hover:from-amber-300 hover:to-yellow-300'
+                    } disabled:opacity-50`}
                   >
                     {tone.label}
                   </button>
@@ -214,8 +214,8 @@ export default function AIEditingModal({ isOpen, onClose, selectedText, onApply 
             </div>
 
             {/* AI Features */}
-            <div className="bg-dark-700 rounded-lg p-4 border border-dark-600 flex-1 overflow-y-auto">
-              <h3 className="text-sm font-semibold text-white mb-3 flex items-center gap-2">
+            <div className="sketchy-card p-4 flex-1 overflow-y-auto">
+              <h3 className="font-sketch font-bold text-gray-800 mb-3 flex items-center gap-2 text-lg">
                 <FiEdit2 size={16} />
                 Editing Tools
               </h3>
@@ -226,11 +226,11 @@ export default function AIEditingModal({ isOpen, onClose, selectedText, onApply 
                     onClick={() => handleEditOption(feature)}
                     disabled={loading && currentEdit?.id === feature.id}
                     title={feature.description}
-                    className="w-full px-3 py-2 rounded text-sm text-left transition-all duration-200 bg-dark-600 text-gray-300 hover:bg-dark-500 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-between group"
+                    className="w-full px-3 py-2 rounded-lg text-sm text-left transition-all bg-gradient-to-r from-amber-100 to-yellow-100 text-gray-800 hover:from-amber-200 hover:to-yellow-200 disabled:opacity-50 flex items-center justify-between group font-handlee"
                   >
                     <span>{feature.label}</span>
                     {loading && currentEdit?.id === feature.id && (
-                      <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
                     )}
                   </button>
                 ))}
@@ -242,7 +242,7 @@ export default function AIEditingModal({ isOpen, onClose, selectedText, onApply 
               <button
                 onClick={handleUndo}
                 disabled={editHistory.length <= 1 || loading}
-                className="w-full px-3 py-2 rounded text-sm transition-all duration-200 bg-orange-600 hover:bg-orange-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full px-3 py-2 rounded-lg text-sm transition-all sketchy-button flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <FiRefreshCw size={16} />
                 Undo
@@ -250,7 +250,7 @@ export default function AIEditingModal({ isOpen, onClose, selectedText, onApply 
               <button
                 onClick={handleReset}
                 disabled={editHistory.length <= 1 || loading}
-                className="w-full px-3 py-2 rounded text-sm transition-all duration-200 bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-3 py-2 rounded-lg text-sm transition-all sketchy-button bg-gradient-to-r from-red-400 to-pink-400 border-red-600 flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 Reset
               </button>
@@ -260,7 +260,7 @@ export default function AIEditingModal({ isOpen, onClose, selectedText, onApply 
           {/* Right Panel - Text Preview */}
           <div className="flex-1 flex flex-col gap-4 overflow-hidden">
             {/* Edit History Tabs */}
-            <div className="flex gap-2 overflow-x-auto pb-2 border-b border-dark-600">
+            <div className="flex gap-2 overflow-x-auto pb-2 border-b-2 border-dashed border-orange-300">
               {editHistory.map((edit, idx) => (
                 <button
                   key={idx}
@@ -269,10 +269,10 @@ export default function AIEditingModal({ isOpen, onClose, selectedText, onApply 
                       setEditHistory(editHistory.slice(0, idx + 1))
                     }
                   }}
-                  className={`px-3 py-2 rounded text-xs whitespace-nowrap transition-all duration-200 ${
+                  className={`px-3 py-2 rounded-lg text-xs whitespace-nowrap transition-all font-sketch font-bold ${
                     idx === editHistory.length - 1
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-dark-600 text-gray-400 hover:bg-dark-500'
+                      ? 'bg-gradient-to-r from-orange-400 to-red-400 text-white shadow-sketchy'
+                      : 'bg-gradient-to-r from-amber-200 to-yellow-200 text-gray-800 hover:from-amber-300 hover:to-yellow-300'
                   }`}
                 >
                   {edit.label}
@@ -282,14 +282,14 @@ export default function AIEditingModal({ isOpen, onClose, selectedText, onApply 
 
             {/* Text Display */}
             <div className="flex-1 overflow-hidden flex flex-col">
-              <div className="flex-1 bg-dark-900 rounded-lg p-4 overflow-y-auto border border-dark-600">
-                <p className="text-gray-200 leading-relaxed whitespace-pre-wrap text-sm md:text-base">
+              <div className="flex-1 bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg p-4 overflow-y-auto border-2 border-dashed border-orange-300">
+                <p className="font-handlee text-gray-800 leading-relaxed whitespace-pre-wrap text-sm md:text-base">
                   {currentText}
                 </p>
               </div>
 
               {/* Word Count */}
-              <div className="text-xs text-gray-500 mt-2 text-right">
+              <div className="font-handlee text-sm text-gray-700 mt-2 text-right">
                 Original: {selectedText.length} chars | Current: {currentText.length} chars
               </div>
             </div>
@@ -299,7 +299,7 @@ export default function AIEditingModal({ isOpen, onClose, selectedText, onApply 
               <button
                 onClick={handleCopy}
                 disabled={loading}
-                className="flex-1 px-4 py-2 rounded transition-all duration-200 bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="flex-1 sketchy-button px-4 py-2 bg-gradient-to-r from-green-400 to-emerald-500 border-emerald-700 flex items-center justify-center gap-2 disabled:opacity-50 hover:shadow-sketchy-hover"
               >
                 <FiCopy size={16} />
                 Copy
@@ -307,7 +307,7 @@ export default function AIEditingModal({ isOpen, onClose, selectedText, onApply 
               <button
                 onClick={handleApply}
                 disabled={loading}
-                className="flex-1 px-4 py-2 rounded transition-all duration-200 bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="flex-1 sketchy-button px-4 py-2 flex items-center justify-center gap-2 disabled:opacity-50 hover:shadow-sketchy-hover"
               >
                 <FiCheck size={16} />
                 Apply Changes

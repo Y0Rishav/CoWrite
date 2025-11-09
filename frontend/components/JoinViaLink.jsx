@@ -9,11 +9,11 @@ export default function JoinViaLink() {
   // Logic is in pages/join/[code].js
 
   return (
-    <div className="text-center py-4">
-      <p className="text-gray-400 text-sm">
-        Or share this link format to invite others:
+    <div className="text-center py-6">
+      <p className="font-handlee text-gray-700 text-lg">
+        🔗 Or share this link format to invite others:
       </p>
-      <code className="bg-dark-700 text-blue-300 px-3 py-1 rounded text-sm mt-2 inline-block">
+      <code className="sketchy-badge px-4 py-2 rounded-lg text-sm mt-3 inline-block font-mono text-lg">
         {typeof window !== 'undefined' ? window.location.origin : ''}/join/CODE
       </code>
     </div>
