@@ -1,0 +1,19 @@
+{
+  "rules": {
+    "docs": {
+      "{docId}": {
+        ".read": "root.child('docs').child(document.id).child('participants').hasChild(request.auth.uid)",
+        ".write": "root.child('docs').child(document.id).child('participants').hasChild(request.auth.uid)",
+        "participants": {
+          ".validate": "newData.hasChildren()"
+        },
+        "owner": {
+          ".validate": "newData.isString()"
+        },
+        "title": {
+          ".validate": "newData.isString() && newData.val().length > 0"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "cowrite-ai",
+  "version": "1.0.0",
+  "description": "Real-time collaborative markdown editor",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "functions"
+  ]
+}

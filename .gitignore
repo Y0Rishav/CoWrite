@@ -1,0 +1,81 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+package-lock.json
+yarn.lock
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+/frontend/.next/
+/frontend/out/
+
+# Production
+/build
+/dist
+/frontend/build
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production.local
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+frontend/.env.production.local
+
+# Firebase
+.firebase/
+firebase-debug.log*
+.firebaserc
+functions/node_modules/
+
+# IDE & Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+*.code-workspace
+.DS_Store
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+*.log
+
+# Misc
+*.pem
+.cache
+.env.development
+.env.test
+
+# MacOS
+.AppleDouble
+.LSOverride
+*.swp
+.DS_Store
+
+# Linux
+.directory
+*~
