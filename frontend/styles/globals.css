@@ -9,3 +9,134 @@
 body {
   @apply bg-dark-900 text-white;
 }
+
+/* Smooth text input animation */
+textarea {
+  @apply transition-all duration-75;
+}
+
+textarea:focus {
+  @apply ring-2 ring-blue-500 ring-opacity-50;
+}
+
+/* Saving indicator animation */
+@keyframes pulse-save {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse-save {
+  animation: pulse-save 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Smooth fade in/out */
+@keyframes fadeInOut {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in-out {
+  animation: fadeInOut 1s ease-in-out infinite;
+}
+
+/* Smooth slide animations */
+@keyframes slideDown {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Character input animation - subtle scale */
+@keyframes charInput {
+  0% {
+    transform: scale(0.98);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-char-input {
+  animation: charInput 0.15s ease-out;
+}
+
+/* Smooth color transitions */
+.transition-smooth {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Button hover animations */
+button {
+  @apply transition-all duration-200;
+}
+
+button:hover {
+  @apply transform hover:scale-105;
+}
+
+button:active {
+  @apply transform scale-95;
+}
+
+/* Toolbar animation */
+.toolbar-item {
+  @apply transition-all duration-200 ease-out;
+}
+
+.toolbar-item:hover {
+  @apply bg-opacity-80 transform scale-110;
+}
+
+/* Text fade animations */
+@keyframes textFade {
+  0% {
+    opacity: 0;
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+.animate-text-fade {
+  animation: textFade 0.4s ease-out;
+}
+
+/* Bounce animation for notifications */
+@keyframes bounce-smooth {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-bounce-smooth {
+  animation: bounce-smooth 0.6s ease-in-out;
+}
+

@@ -74,7 +74,7 @@ export default function CollaborativeEditor({ docId, docTitle }) {
     const newContent = e.target.value
     setContent(newContent)
 
-    // Debounced save to Firestore
+    
     clearTimeout(syncTimeoutRef.current)
     setIsSaving(true)
     
@@ -92,7 +92,7 @@ export default function CollaborativeEditor({ docId, docTitle }) {
         Toast.error('Failed to save changes')
         setIsSaving(false)
       }
-    }, 2000) // Save after 2 seconds of inactivity
+    }, 10) 
   }
 
   // Text formatting utilities
@@ -173,7 +173,13 @@ export default function CollaborativeEditor({ docId, docTitle }) {
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <h2 className="text-lg font-semibold text-white truncate">{docTitle}</h2>
           {isSaving && (
-            <span className="text-xs text-gray-400 animate-pulse">Saving...</span>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse-save"></div>
+              <span className="text-xs text-blue-400 animate-pulse-save">Saving...</span>
+            </div>
+          )}
+          {!isSaving && lastSavedRef.current && (
+            <span className="text-xs text-gray-500">✓ Saved</span>
           )}
         </div>
         <div className="flex gap-3 items-center flex-wrap">
@@ -181,9 +187,9 @@ export default function CollaborativeEditor({ docId, docTitle }) {
           <div className="flex gap-2">
             <button
               onClick={() => setViewMode('edit')}
-              className={`flex items-center gap-2 px-3 py-1 rounded transition-colors ${
+              className={`flex items-center gap-2 px-3 py-1 rounded transition-all duration-200 transform hover:scale-105 active:scale-95 ${
                 viewMode === 'edit'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-dark-700 text-gray-400 hover:bg-dark-600'
               }`}
             >
@@ -192,9 +198,9 @@ export default function CollaborativeEditor({ docId, docTitle }) {
             </button>
             <button
               onClick={() => setViewMode('split')}
-              className={`flex items-center gap-2 px-3 py-1 rounded transition-colors ${
+              className={`flex items-center gap-2 px-3 py-1 rounded transition-all duration-200 transform hover:scale-105 active:scale-95 ${
                 viewMode === 'split'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-dark-700 text-gray-400 hover:bg-dark-600'
               }`}
             >
@@ -210,21 +216,21 @@ export default function CollaborativeEditor({ docId, docTitle }) {
         <div className="flex gap-1 border-r border-dark-700 pr-2">
           <button
             onClick={handleBold}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-colors"
+            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item"
             title="Bold (Ctrl+B)"
           >
             <FiBold size={16} />
           </button>
           <button
             onClick={handleItalic}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-colors"
+            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item"
             title="Italic (Ctrl+I)"
           >
             <FiItalic size={16} />
           </button>
           <button
             onClick={handleCode}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-colors"
+            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item"
             title="Inline Code (Ctrl+E)"
           >
             <FiCode size={16} />
@@ -234,21 +240,21 @@ export default function CollaborativeEditor({ docId, docTitle }) {
         <div className="flex gap-1 border-r border-dark-700 pr-2">
           <button
             onClick={() => handleHeading(1)}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-colors text-sm font-bold"
+            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item text-sm font-bold"
             title="Heading 1"
           >
             H1
           </button>
           <button
             onClick={() => handleHeading(2)}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-colors text-sm font-bold"
+            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item text-sm font-bold"
             title="Heading 2"
           >
             H2
           </button>
           <button
             onClick={() => handleHeading(3)}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-colors text-sm font-bold"
+            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item text-sm font-bold"
             title="Heading 3"
           >
             H3
@@ -258,21 +264,21 @@ export default function CollaborativeEditor({ docId, docTitle }) {
         <div className="flex gap-1 border-r border-dark-700 pr-2">
           <button
             onClick={handleLink}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-colors"
+            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item"
             title="Link (Ctrl+K)"
           >
             <FiLink2 size={16} />
           </button>
           <button
             onClick={handleBulletList}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-colors"
+            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item"
             title="Bullet List"
           >
             <FiList size={16} />
           </button>
           <button
             onClick={handleNumberedList}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-colors text-sm font-bold"
+            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item text-sm font-bold"
             title="Numbered List"
           >
             1.
@@ -282,14 +288,14 @@ export default function CollaborativeEditor({ docId, docTitle }) {
         <div className="flex gap-1 border-r border-dark-700 pr-2">
           <button
             onClick={handleCodeBlock}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-colors text-xs font-mono"
+            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item text-xs font-mono"
             title="Code Block"
           >
             &lt;/&gt;
           </button>
           <button
             onClick={handleQuote}
-            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-colors font-bold"
+            className="p-2 text-gray-400 hover:text-white hover:bg-dark-700 rounded transition-all duration-200 transform hover:scale-110 active:scale-95 toolbar-item font-bold"
             title="Quote"
           >
             "
@@ -301,7 +307,7 @@ export default function CollaborativeEditor({ docId, docTitle }) {
           <select
             value={fontSize}
             onChange={(e) => setFontSize(e.target.value)}
-            className="bg-dark-700 text-gray-300 px-2 py-1 rounded text-sm border border-dark-600 focus:outline-none"
+            className="bg-dark-700 text-gray-300 px-2 py-1 rounded text-sm border border-dark-600 focus:outline-none transition-all duration-200 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 hover:bg-dark-600"
           >
             <option value="xs">XS</option>
             <option value="sm">Small</option>
@@ -322,8 +328,14 @@ export default function CollaborativeEditor({ docId, docTitle }) {
             onChange={handleContentChange}
             onKeyDown={handleKeyDown}
             placeholder="Start typing... Supports Markdown! Use Ctrl+B for bold, Ctrl+I for italic, Ctrl+K for links, Ctrl+E for code"
-            className={`w-full h-full bg-dark-900 text-white p-4 resize-none focus:outline-none font-mono text-${fontSize}`}
+            className={`w-full h-full bg-dark-900 text-white p-4 resize-none focus:outline-none font-mono text-${fontSize} transition-all duration-75 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
             spellCheck="false"
+            style={{
+              lineHeight: '1.6',
+              scrollBehavior: 'smooth',
+              backfaceVisibility: 'hidden',
+              WebkitFontSmoothing: 'antialiased',
+            }}
           />
         </div>
 
