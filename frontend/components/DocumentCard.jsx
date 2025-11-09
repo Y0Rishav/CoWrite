@@ -69,10 +69,12 @@ export default function DocumentCard({ doc, docId, onDocumentDeleted }) {
 
   return (
     <>
-      <div className="bg-dark-800 rounded-lg p-4 border border-dark-700 hover:border-dark-600 transition-colors flex flex-col h-full">
-        <div className="mb-3 flex-1">
-          <div className="flex justify-between items-start mb-2">
-            <h3 className="text-lg font-semibold text-white truncate flex-1">{doc.title}</h3>
+      <div className="sketchy-card p-6 flex flex-col h-full hover:shadow-sketchy-lg transition-shadow">
+        <div className="mb-4 flex-1">
+          <div className="flex justify-between items-start mb-3">
+            <h3 className="font-sketch text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 truncate flex-1">
+              {doc.title}
+            </h3>
             {isOwner && (
               <button
                 onClick={(e) => {
@@ -80,44 +82,42 @@ export default function DocumentCard({ doc, docId, onDocumentDeleted }) {
                   handleDeleteDocument()
                 }}
                 disabled={isDeleting}
-                className="ml-2 p-1 text-red-400 hover:text-red-300 hover:bg-red-900 hover:bg-opacity-30 rounded transition-colors disabled:opacity-50"
+                className="ml-2 p-2 text-red-600 hover:text-red-700 hover:bg-red-100 rounded-lg transition-colors disabled:opacity-50 font-handlee"
                 title="Delete document"
               >
-                <FiTrash2 size={16} />
+                <FiTrash2 size={18} />
               </button>
             )}
           </div>
-          <p className="text-sm text-gray-400">Last edited {formatDate(doc.lastEdited)}</p>
+          <p className="font-handlee text-gray-700 text-sm">
+            📅 Last edited {formatDate(doc.lastEdited)}
+          </p>
         </div>
 
-        <div className="flex items-center gap-2 mb-3 flex-wrap">
-          <span className="inline-block bg-blue-900 text-blue-200 px-2 py-1 rounded text-xs font-mono">
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <span className="sketchy-badge font-mono text-xs">
             {joinCode}
           </span>
-          <span className="text-gray-500 text-xs">
-            {participants.length} participant{participants.length !== 1 ? 's' : ''}
+          <span className="font-handlee text-gray-700 text-sm">
+            👥 {participants.length} participant{participants.length !== 1 ? 's' : ''}
           </span>
         </div>
 
         {/* Show first few participants */}
         {participants.length > 0 && (
-          <div className="mb-3 flex flex-wrap gap-1">
+          <div className="mb-4 flex flex-wrap gap-2">
             {participants.slice(0, 3).map(([userId, participantData]) => (
-              <div key={userId} className="flex items-center gap-1">
-                <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${
-                  participantData.role === 'owner' 
-                    ? 'bg-yellow-900 text-yellow-200' 
-                    : 'bg-blue-900 text-blue-200'
-                }`}>
+              <div key={userId} className="flex items-center gap-2 bg-gradient-to-r from-amber-100 to-yellow-100 px-3 py-1 rounded-lg">
+                <span className="text-lg">
                   {participantData.role === 'owner' ? '👑' : '👤'}
                 </span>
-                <span className="text-xs text-gray-400 truncate max-w-xs" title={participantData.displayName}>
+                <span className="font-handlee text-sm text-gray-700 truncate max-w-xs" title={participantData.displayName}>
                   {participantData.displayName}
                 </span>
               </div>
             ))}
             {participants.length > 3 && (
-              <span className="text-xs text-gray-500">+{participants.length - 3} more</span>
+              <span className="font-handlee text-sm text-gray-600">+{participants.length - 3} more</span>
             )}
           </div>
         )}
@@ -128,7 +128,7 @@ export default function DocumentCard({ doc, docId, onDocumentDeleted }) {
               e.stopPropagation()
               setShowCodeModal(true)
             }}
-            className="flex-1 min-w-max flex items-center justify-center gap-1 px-3 py-2 bg-dark-700 hover:bg-dark-600 text-gray-300 rounded text-sm transition-colors"
+            className="flex-1 min-w-max flex items-center justify-center gap-1 px-3 py-2 bg-gradient-to-r from-amber-200 to-yellow-200 hover:from-amber-300 hover:to-yellow-300 text-gray-800 rounded-lg font-sketch font-bold transition-all text-sm"
             title="Show share code"
           >
             <FiCode size={14} />
@@ -139,7 +139,7 @@ export default function DocumentCard({ doc, docId, onDocumentDeleted }) {
               e.stopPropagation()
               handleCopyCode()
             }}
-            className="flex-1 min-w-max flex items-center justify-center gap-1 px-3 py-2 bg-dark-700 hover:bg-dark-600 text-gray-300 rounded text-sm transition-colors"
+            className="flex-1 min-w-max flex items-center justify-center gap-1 px-3 py-2 bg-gradient-to-r from-amber-200 to-yellow-200 hover:from-amber-300 hover:to-yellow-300 text-gray-800 rounded-lg font-sketch font-bold transition-all text-sm"
             title="Copy join code"
           >
             <FiCopy size={14} />
@@ -150,7 +150,7 @@ export default function DocumentCard({ doc, docId, onDocumentDeleted }) {
               e.stopPropagation()
               handleCopyLink()
             }}
-            className="flex-1 min-w-max flex items-center justify-center gap-1 px-3 py-2 bg-dark-700 hover:bg-dark-600 text-gray-300 rounded text-sm transition-colors"
+            className="flex-1 min-w-max flex items-center justify-center gap-1 px-3 py-2 bg-gradient-to-r from-amber-200 to-yellow-200 hover:from-amber-300 hover:to-yellow-300 text-gray-800 rounded-lg font-sketch font-bold transition-all text-sm"
             title="Copy share link"
           >
             <FiShare2 size={14} />
@@ -161,7 +161,7 @@ export default function DocumentCard({ doc, docId, onDocumentDeleted }) {
               e.stopPropagation()
               router.push(`/doc/${docId}`)
             }}
-            className="flex-1 min-w-max flex items-center justify-center gap-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm transition-colors"
+            className="sketchy-button flex-1 min-w-max flex items-center justify-center gap-1 px-3 py-2 text-sm"
             title="Open document"
           >
             <FiExternalLink size={14} />
@@ -172,57 +172,59 @@ export default function DocumentCard({ doc, docId, onDocumentDeleted }) {
 
       {/* Code Share Modal */}
       {showCodeModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-dark-800 rounded-lg p-6 max-w-md w-full border border-dark-700">
-            <h2 className="text-xl font-bold text-white mb-4">Share Document</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="sketchy-card p-8 max-w-md w-full">
+            <h2 className="font-sketch text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600 mb-6">
+              📤 Share Document
+            </h2>
             
-            <div className="space-y-4">
+            <div className="space-y-6">
               {/* Join Code */}
               <div>
-                <p className="text-sm text-gray-400 mb-2">Join Code</p>
+                <p className="font-sketch font-bold text-gray-800 mb-2 text-lg">Join Code</p>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={joinCode}
                     readOnly
-                    className="flex-1 bg-dark-700 text-white px-3 py-2 rounded border border-dark-600 font-mono text-sm"
+                    className="sketchy-input flex-1 font-mono text-sm"
                   />
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(joinCode)
                       Toast.success('Code copied!')
                     }}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm transition-colors"
+                    className="sketchy-button px-4 py-2"
                   >
                     Copy
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="font-handlee text-gray-700 mt-2 text-sm">
                   Share this code with teammates. They can use it to join the document.
                 </p>
               </div>
 
               {/* Share Link */}
               <div>
-                <p className="text-sm text-gray-400 mb-2">Share Link</p>
+                <p className="font-sketch font-bold text-gray-800 mb-2 text-lg">Share Link</p>
                 <div className="flex gap-2">
                   <input
                     type="text"
                     value={shareUrl}
                     readOnly
-                    className="flex-1 bg-dark-700 text-white px-3 py-2 rounded border border-dark-600 font-mono text-xs break-all"
+                    className="sketchy-input flex-1 font-mono text-xs break-all"
                   />
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(shareUrl)
                       Toast.success('Link copied!')
                     }}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm transition-colors"
+                    className="sketchy-button px-4 py-2"
                   >
                     Copy
                   </button>
                 </div>
-                <p className="text-xs text-gray-500 mt-2">
+                <p className="font-handlee text-gray-700 mt-2 text-sm">
                   Share this link with teammates. They'll automatically join when they click it.
                 </p>
               </div>
@@ -230,7 +232,7 @@ export default function DocumentCard({ doc, docId, onDocumentDeleted }) {
 
             <button
               onClick={() => setShowCodeModal(false)}
-              className="w-full mt-6 px-4 py-2 bg-dark-700 hover:bg-dark-600 text-gray-300 rounded transition-colors"
+              className="w-full mt-6 px-4 py-2 bg-gradient-to-r from-amber-200 to-yellow-200 hover:from-amber-300 hover:to-yellow-300 text-gray-800 rounded-lg font-sketch font-bold transition-all"
             >
               Close
             </button>

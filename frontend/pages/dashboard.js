@@ -57,28 +57,32 @@ export default function Dashboard() {
 
   if (authLoading || !user) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-dark-900">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-200 border-t-orange-600 mx-auto mb-6"></div>
+          <p className="font-handlee text-gray-700 text-xl">Loading your workspace...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-dark-900">
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
       {/* Header */}
-      <div className="bg-dark-800 border-b border-dark-700">
-        <div className="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+      <div className="sketchy-container border-b border-orange-300 shadow-sketchy">
+        <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            <div>
-              <h1 className="text-3xl font-bold text-white">CoWrite.AI</h1>
-              <p className="text-gray-400 text-sm mt-1">Welcome, {user.displayName}!</p>
+            <div className="animate-slide-in-left">
+              <h1 className="font-sketch text-4xl md:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">
+                CoWrite.AI
+              </h1>
+              <p className="font-handlee text-gray-700 text-lg mt-2">
+                👋 Welcome, {user.displayName}!
+              </p>
             </div>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-dark-700 hover:bg-dark-600 text-gray-300 rounded-lg transition-colors"
+              className="sketchy-button flex items-center gap-2 px-4 py-2 hover:shadow-sketchy-hover animate-slide-in-right"
             >
               <FiLogOut size={18} />
               <span className="hidden sm:inline">Sign Out</span>
@@ -90,58 +94,61 @@ export default function Dashboard() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         {/* Action Buttons */}
-        <div className="mb-8 flex gap-3 flex-wrap">
+        <div className="mb-8 flex gap-4 flex-wrap animate-slide-down">
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+            className="sketchy-button flex items-center gap-2 px-6 py-3 hover:shadow-sketchy-hover"
           >
-            <FiPlus size={20} />
-            Create New Document
+            <FiPlus size={22} />
+            <span className="text-lg">Create Document</span>
           </button>
           <button
             onClick={() => setIsJoinModalOpen(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors"
+            className="sketchy-button flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-400 to-emerald-500 border-emerald-700 hover:shadow-sketchy-hover"
           >
-            <FiLink size={20} />
-            Join with Code
+            <FiLink size={22} />
+            <span className="text-lg">Join with Code</span>
           </button>
         </div>
 
         {/* Documents Grid */}
         {docsLoading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-            <p className="text-gray-400">Loading your documents...</p>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-200 border-t-orange-600 mx-auto mb-6"></div>
+            <p className="font-handlee text-gray-700 text-xl">Loading your documents...</p>
           </div>
         ) : docs.length === 0 ? (
-          <div className="text-center py-12 bg-dark-800 rounded-lg border border-dark-700">
-            <p className="text-gray-400 mb-4">No documents yet. Create one to get started!</p>
-            <div className="flex gap-2 justify-center flex-wrap">
+          <div className="text-center py-12 sketchy-card p-8">
+            <p className="font-handlee text-gray-700 text-lg mb-6">
+              📝 No documents yet. Create one to get started!
+            </p>
+            <div className="flex gap-4 justify-center flex-wrap">
               <button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                className="sketchy-button inline-flex items-center gap-2 px-6 py-2"
               >
-                <FiPlus size={18} />
+                <FiPlus size={20} />
                 Create Document
               </button>
               <button
                 onClick={() => setIsJoinModalOpen(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                className="sketchy-button inline-flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-green-400 to-emerald-500 border-emerald-700"
               >
-                <FiLink size={18} />
+                <FiLink size={20} />
                 Join Document
               </button>
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {docs.map((doc) => (
-              <DocumentCard 
-                key={doc.id} 
-                doc={doc} 
-                docId={doc.id} 
-                onDocumentDeleted={loadDocuments}
-              />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {docs.map((doc, index) => (
+              <div key={doc.id} className="animate-slide-in-left" style={{animationDelay: `${index * 0.1}s`}}>
+                <DocumentCard 
+                  doc={doc} 
+                  docId={doc.id} 
+                  onDocumentDeleted={loadDocuments}
+                />
+              </div>
             ))}
           </div>
         )}

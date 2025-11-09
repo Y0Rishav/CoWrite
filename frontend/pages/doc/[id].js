@@ -61,10 +61,10 @@ export default function EditorPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-dark-900">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading document...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-orange-200 border-t-orange-600 mx-auto mb-6"></div>
+          <p className="font-handlee text-gray-700 text-xl">Loading document...</p>
         </div>
       </div>
     )
@@ -72,12 +72,12 @@ export default function EditorPage() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-dark-900">
-        <div className="text-center">
-          <p className="text-red-400 mb-4">{error}</p>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
+        <div className="text-center sketchy-card p-8 max-w-md">
+          <p className="font-handlee text-red-600 text-lg mb-6">❌ {error}</p>
           <button
             onClick={() => router.push('/dashboard')}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg mx-auto"
+            className="sketchy-button flex items-center gap-2 px-4 py-2 mx-auto hover:shadow-sketchy-hover"
           >
             <FiArrowLeft size={18} />
             Back to Dashboard
@@ -92,14 +92,14 @@ export default function EditorPage() {
   }
 
   return (
-    <div className="h-screen bg-dark-900 flex flex-col">
-      {/* Back Button */}
-      <div className="bg-dark-800 border-b border-dark-700 px-4 py-3">
+    <div className="h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 flex flex-col">
+      {/* Back Button Header */}
+      <div className="sketchy-container border-b border-orange-300 px-4 py-3 shadow-sketchy">
         <button
           onClick={() => router.push('/dashboard')}
-          className="flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-gray-700 hover:text-orange-600 transition-colors font-handlee text-lg"
         >
-          <FiArrowLeft size={18} />
+          <FiArrowLeft size={20} />
           <span>Back to Dashboard</span>
         </button>
       </div>
