@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin+Sketch:wght@400;700&family=Handlee&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,29 +8,126 @@
   @apply transition-colors duration-200;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  @apply bg-dark-900 text-white;
+  @apply bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 text-gray-800;
+  font-family: 'Handlee', cursive;
+}
+
+/* Base Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Cabin Sketch', cursive;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+h1 {
+  @apply text-4xl md:text-5xl font-bold mb-4;
+  background: linear-gradient(135deg, #ea580c, #c2410c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  @apply text-3xl md:text-4xl font-bold mb-3;
+  color: #b45309;
+}
+
+h3 {
+  @apply text-2xl md:text-3xl font-bold mb-2;
+  color: #d97706;
+}
+
+h4, h5, h6 {
+  @apply font-bold mb-1;
+  color: #f59e0b;
+}
+
+code, pre {
+  font-family: 'JetBrains Mono', monospace;
+  background-color: rgba(0, 0, 0, 0.05);
+  @apply rounded-lg;
 }
 
 /* Smooth text input animation */
 textarea {
   @apply transition-all duration-75;
+  font-family: 'Handlee', cursive;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.9), rgba(255, 250, 205, 0.9));
+  border: 2px dashed #f59e0b !important;
+  border-radius: 0.5rem;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.05);
 }
 
 textarea:focus {
-  @apply ring-2 ring-blue-500 ring-opacity-50;
+  @apply ring-4 ring-orange-400 ring-opacity-75;
+  border: 2px dashed #ea580c !important;
+  box-shadow: 5px 5px 0px rgba(234, 88, 12, 0.15), inset 0 0 10px rgba(234, 88, 12, 0.1);
+}
+
+input {
+  font-family: 'Handlee', cursive;
+}
+
+input:focus {
+  @apply ring-4 ring-orange-400 ring-opacity-75;
+}
+
+/* Sketchy hand-drawn effect */
+@keyframes sketch-draw {
+  0% {
+    stroke-dashoffset: 1000;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.sketch-effect {
+  position: relative;
+  background: linear-gradient(135deg, #fef3c7, #fef08a, #fef3c7);
+  border: 2px dashed #f59e0b;
+  border-radius: 0.5rem;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.08), 
+              2px 2px 0px rgba(234, 88, 12, 0.1),
+              -2px -2px 0px rgba(255, 255, 255, 0.5) inset;
+  transform: perspective(1000px) rotateX(1deg) rotateY(-1deg) rotateZ(0.5deg);
+}
+
+.sketch-effect::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.02) 2px,
+    rgba(0, 0, 0, 0.02) 4px
+  );
+  border-radius: 0.5rem;
+  pointer-events: none;
 }
 
 /* Saving indicator animation */
 @keyframes pulse-save {
   0% {
     opacity: 1;
+    transform: scale(1);
   }
   50% {
     opacity: 0.6;
+    transform: scale(1.05);
   }
   100% {
     opacity: 1;
+    transform: scale(1);
   }
 }
 
@@ -50,20 +149,50 @@ textarea:focus {
   animation: fadeInOut 1s ease-in-out infinite;
 }
 
-/* Smooth slide animations */
+/* Smooth slide animations with sketchy feel */
 @keyframes slideDown {
   from {
-    transform: translateY(-10px);
+    transform: translateY(-10px) rotateZ(-1deg);
     opacity: 0;
   }
   to {
-    transform: translateY(0);
+    transform: translateY(0) rotateZ(0deg);
     opacity: 1;
   }
 }
 
 .animate-slide-down {
   animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-20px) rotateZ(2deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) rotateZ(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.4s ease-out;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(20px) rotateZ(-2deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) rotateZ(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.4s ease-out;
 }
 
 /* Character input animation - subtle scale */
@@ -88,13 +217,136 @@ textarea:focus {
   @apply transition-all duration-300 ease-in-out;
 }
 
+/* Sketchy container styles */
+.sketchy-container {
+  background: linear-gradient(135deg, #fffbeb, #fef3c7);
+  border: 2px dashed #f59e0b;
+  border-radius: 0.75rem;
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.1), 
+              3px 3px 0px rgba(234, 88, 12, 0.15),
+              -2px -2px 0px rgba(255, 255, 255, 0.5) inset;
+  position: relative;
+  transform: perspective(1000px) rotateX(0.5deg) rotateY(-1deg);
+}
+
+.sketchy-container::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 0, 0, 0.02) 3px,
+    rgba(0, 0, 0, 0.02) 6px
+  );
+  border-radius: 0.75rem;
+  pointer-events: none;
+}
+
+.sketchy-button {
+  @apply font-bold px-6 py-3 rounded-lg transition-all;
+  font-family: 'Cabin Sketch', cursive;
+  background: linear-gradient(135deg, #f59e0b, #ea580c);
+  color: white;
+  border: 2px solid #b45309;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2), 
+              2px 2px 0px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.sketchy-button:hover {
+  transform: translateY(-4px) translateX(-4px);
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.2), 
+              4px 4px 0px rgba(0, 0, 0, 0.1);
+}
+
+.sketchy-button:active {
+  transform: translateY(2px) translateX(2px);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+.sketchy-card {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 50%, #feebc8 100%);
+  border: 2px dashed #f59e0b;
+  border-radius: 0.75rem;
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.1), 
+              3px 3px 0px rgba(234, 88, 12, 0.12),
+              -2px -2px 0px rgba(255, 255, 255, 0.6) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+.sketchy-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.01) 2px,
+    rgba(0, 0, 0, 0.01) 4px
+  ),
+  repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.01) 2px,
+    rgba(0, 0, 0, 0.01) 4px
+  );
+  pointer-events: none;
+  border-radius: 0.75rem;
+}
+
+.sketchy-input {
+  @apply w-full px-4 py-2 rounded-lg transition-all;
+  font-family: 'Handlee', cursive;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.9), rgba(255, 250, 205, 0.9));
+  border: 2px dashed #f59e0b;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.05);
+}
+
+.sketchy-input:focus {
+  @apply outline-none;
+  border: 2px dashed #ea580c;
+  box-shadow: 5px 5px 0px rgba(234, 88, 12, 0.15);
+}
+
+.sketchy-badge {
+  @apply inline-block px-3 py-1 rounded-full text-sm font-bold;
+  font-family: 'Cabin Sketch', cursive;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #78350f;
+  border: 1px solid #b45309;
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+}
+
 /* Button hover animations */
 button {
   @apply transition-all duration-200;
+  font-family: 'Cabin Sketch', cursive;
+  font-weight: 700;
+  position: relative;
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  border: inherit;
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 button:hover {
-  @apply transform hover:scale-105;
+  @apply transform;
+  transform: translateY(-2px) translateX(-2px);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.15), 
+              2px 2px 0px rgba(234, 88, 12, 0.2);
 }
 
 button:active {
